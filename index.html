@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PP Beauty Parlour Booking</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="rose-theme">
+<a href="auth.html>Admin</a>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-inner">
+      <div class="brand">✨ Beauty Parlour</div>
+      <ul class="nav-links">
+        <li><a href="#" data-route="home">Home</a></li>
+        <li><a href="#" data-route="services">Services</a></li>
+        <li><a href="#" data-route="about">About</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button id="loginBtn" class="btn btn-outline">Login</button>
+        <button id="signupBtn" class="btn btn-solid">Sign Up</button>
+        <div id="userMenu" class="user-menu hidden">
+          <span id="userName"></span>
+          <button id="dashboardBtn" class="btn btn-outline btn-sm">Dashboard</button>
+          <button id="logoutBtn" class="btn btn-ghost btn-sm">Logout</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Pages -->
+  <main id="app">
+    <!-- Home -->
+    <section id="homePage" class="page active">
+      <div class="hero">
+        <h1>Premium Beauty Services</h1>
+        <p>Pick a section to continue</p>
+        <div class="hero-actions">
+          <button id="femaleServicesBtn" class="btn big rose">Female Services</button>
+          <button id="maleServicesBtn" class="btn big blue">Male Services</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Services -->
+    <section id="servicesPage" class="page">
+      <div class="section-header">
+        <h2 id="servicesTitle">Services</h2>
+        <div class="toggle-group">
+          <button id="switchFemale" class="btn small rose">Female</button>
+          <button id="switchMale" class="btn small blue">Male</button>
+        </div>
+      </div>
+      <div id="servicesGrid" class="grid"></div>
+    </section>
+
+    <!-- Service Detail -->
+    <section id="detailPage" class="page">
+      <button class="btn small btn-ghost" data-route="services">← Back</button>
+      <div id="detailCard" class="detail-card"></div>
+    </section>
+
+    <!-- Booking -->
+    <section id="bookingPage" class="page">
+      <button class="btn small btn-ghost" data-route="services">← Back</button>
+      <h2>Book Appointment</h2>
+      <form id="bookingForm" class="form">
+        <div class="form-row">
+          <label>Selected Service</label>
+          <input id="bookingService" type="text" readonly required />
+        </div>
+        <div class="form-row">
+          <label>Price (INR)</label>
+          <input id="bookingPrice" type="number" readonly required />
+        </div>
+        <div class="form-row">
+          <label>Name</label>
+          <input id="custName" type="text" placeholder="Full name" required />
+        </div>
+        <div class="form-row">
+          <label>Phone</label>
+          <input id="custPhone" type="tel" pattern="[0-9]{10}" placeholder="10-digit mobile" required />
+        </div>
+        <div class="form-row">
+          <label>Email</label>
+          <input id="custEmail" type="email" placeholder="email@example.com" required />
+        </div>
+        <div class="split">
+          <div class="form-row">
+            <label>Date</label>
+            <input id="bookingDate" type="date" required />
+          </div>
+          <div class="form-row">
+            <label>Time</label>
+            <select id="bookingTime" required></select>
+          </div>
+        </div>
+
+        <fieldset class="paybox">
+          <legend>Payment Method</legend>
+          <div class="pay-options">
+            <label><input type="radio" name="pay" value="PhonePe" required/> PhonePe</label>
+            <label><input type="radio" name="pay" value="PayTM" /> PayTM</label>
+            <label><input type="radio" name="pay" value="Google Pay" /> Google Pay</label>
+            <label><input type="radio" name="pay" value="Cash" /> Cash</label>
+          </div>
+          <div id="qrWrap" class="qr-wrap hidden">
+            <img id="upiQR" alt="UPI QR" />
+            <a id="upiLink" class="btn btn-outline small" target="_blank" rel="noopener">Open UPI App</a>
+          </div>
+        </fieldset>
+
+        <button type="submit" class="btn big btn-solid">Confirm Booking</button>
+      </form>
+    </section>
+
+    <!-- User Dashboard -->
+    <section id="userDashboard" class="page">
+      <h2>My Bookings</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th><th>Service</th><th>Date</th><th>Time</th><th>Amount</th><th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="myBookingsBody"></tbody>
+      </table>
+    </section>
+
+    <!-- Admin Login -->
+    <section id="adminLoginPage" class="page">
+      <h2>Admin Login</h2>
+      <form id="adminLoginForm" class="form narrow">
+        <div class="form-row">
+          <label>Email</label>
+          <input id="adminEmail" type="email" required />
+        </div>
+        <div class="form-row">
+          <label>Password</label>
+          <input id="adminPass" type="password" required />
+        </div>
+        <button type="submit" class="btn btn-solid">Login</button>
+      </form>
+    </section>
+
+    <!-- Admin Dashboard -->
+    <section id="adminDashboard" class="page admin">
+      <div class="admin-top">
+        <h2>All Bookings</h2>
+        <div class="admin-actions">
+          <input id="adminSearch" class="search" placeholder="Search name/service/email"/>
+          <div id="adminRevenue" class="revenue">₹0</div>
+          <button id="adminLogout" class="btn btn-outline small">Logout</button>
+        </div>
+      </div>
+      <table class="table admin-table">
+        <thead>
+          <tr>
+            <th>ID</th><th>Name</th><th>Phone</th><th>Email</th>
+            <th>Service</th><th>Date</th><th>Time</th><th>Amount</th><th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="adminBookingsBody"></tbody>
+      </table>
+    </section>
+
+    <!-- Auth Modals -->
+    <dialog id="loginModal" class="modal">
+      <form id="loginForm" method="dialog" class="form">
+        <h3>Login</h3>
+        <div class="form-row"><label>Email</label><input id="loginEmail" type="email" required /></div>
+        <div class="form-row"><label>Password</label><input id="loginPassword" type="password" required /></div>
+        <div class="row between">
+          <button class="btn btn-ghost" value="cancel">Cancel</button>
+          <button class="btn btn-solid" value="confirm">Login</button>
+        </div>
+        <div class="hint">Admin? Use admin login page from navbar or email: admin@beautyparlour.com</div>
+      </form>
+    </dialog>
+
+    <dialog id="signupModal" class="modal">
+      <form id="signupForm" method="dialog" class="form">
+        <h3>Sign Up</h3>
+        <div class="form-row"><label>Name</label><input id="signupName" required /></div>
+        <div class="form-row"><label>Phone</label><input id="signupPhone" pattern="[0-9]{10}" required /></div>
+        <div class="form-row"><label>Email</label><input id="signupEmail" type="email" required /></div>
+        <div class="form-row"><label>Password</label><input id="signupPassword" type="password" minlength="6" required /></div>
+        <div class="row between">
+          <button class="btn btn-ghost" value="cancel">Cancel</button>
+          <button class="btn btn-solid" value="confirm">Create Account</button>
+        </div>
+      </form>
+    </dialog>
+  </main>
+
+  <footer class="footer">
+    <div>© 2025 PP Beauty Parlour Booking</div>
+    <button id="goAdmin" class="btn btn-ghost small">Admin Login</button>
+  </footer>
+
+  <script src="app.js"></script>
+  <script src="auth.js"></script>
+  
+
+</body>
+</html>
+

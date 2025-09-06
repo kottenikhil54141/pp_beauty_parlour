@@ -1,0 +1,93 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Admin • Beauty Parlour</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="admin-surface">
+  <main class="page admin">
+    <h1>Admin Login</h1>
+    <form id="adminLogin" class="form narrow">
+      <label>Email <input id="adminEmail" type="email" required></label>
+      <label>Password <input id="adminPass" type="password" required></label>
+      <button class="btn btn-solid" type="submit">Login</button>
+    </form>
+
+    <section id="adminPanel" class="hidden">
+      <div class="admin-top">
+        <h2>All Bookings</h2>
+        <input id="adminSearch" class="search" placeholder="Search name/service/email">
+        <div id="adminRevenue" class="revenue">₹0</div>
+        <a href="index.html" class="btn btn-outline small">Back to Site</a>
+      </div>
+      <table class="table admin-table">
+        <thead><tr>
+          <th>ID</th><th>Name</th><th>Phone</th><th>Email</th>
+          <th>Service</th><th>Date</th><th>Time</th><th>Amount</th><th>Status</th>
+        </tr></thead>
+        <tbody id="adminBookingsBody"></tbody>
+      </table>
+    </section>
+  </main>
+  <script type="module">
+    import { ADMIN, getBookings, setBookings } from './js/common.js';
+    // Login
+    const form = document.getElementById('adminLogin');
+    const panel = document.getElementById('adminPanel');
+    form.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const email = document.getElementById('adminEmail').value.trim().toLowerCase();
+      const pass = document.getElementById('adminPass').value;
+      if(email===ADMIN.EMAIL && pass===ADMIN.PASS){
+        form.classList.add('hidden');
+        panel.classList.remove('hidden');
+        render();
+      }else{
+        alert('Invalid admin credentials');
+      }
+    });
+
+    // Render + live updates
+    const tbody = document.getElementById('adminBookingsBody');
+    const search = document.getElementById('adminSearch');
+    const revenueEl = document.getElementById('adminRevenue');
+
+    function render(){
+      const q = (search.value||'').toLowerCase();
+      const all = getBookings();
+      const rows = all
+        .filter(b => (`${b.customerInfo?.name||''} ${b.customerInfo?.email||''} ${b.service}`.toLowerCase()).includes(q))
+        .map(b=>`
+          <tr>
+            <td>${b.id}</td>
+            <td>${b.customerInfo?.name||''}</td>
+            <td>${b.customerInfo?.phone||''}</td>
+            <td>${b.customerInfo?.email||''}</td>
+            <td>${b.service}</td>
+            <td>${b.date}</td>
+            <td>${b.time}</td>
+            <td>₹${b.price}</td>
+            <td>
+              <select data-id="${b.id}" class="statusSelect">
+                ${['Pending','Confirmed','Completed','Cancelled'].map(s=>`<option ${s===b.status?'selected':''}>${s}</option>`).join('')}
+              </select>
+            </td>
+          </tr>`).join('');
+      tbody.innerHTML = rows;
+
+      const total = all.filter(x=>x.status!=='Cancelled').reduce((s,x)=>s+Number(x.price||0),0);
+      revenueEl.textContent = `₹${total}`;
+
+      document.querySelectorAll('.statusSelect').forEach(sel=>{
+        sel.onchange = (e)=>{
+          const id = Number(e.target.dataset.id);
+          const updated = getBookings().map(b => b.id===id ? {...b, status: e.target.value} : b);
+          setBookings(updated);
+          render();
+        };
+      });
+    }
+    search.addEventListener('input', render);
+    window.addEventListener('storage', (e)=>{ if(e.key==='bookings') render(); }); // cross-tab refresh
+  </script>
+</body></html>
